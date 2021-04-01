@@ -35,7 +35,8 @@ app.get('/', (request,response) => {
 
     db.collection('toDoList').find().toArray()
     .then(data =>{
-        
+
+        console.log(data)
         response.render('index.ejs',{info:data})     
     })
 
@@ -60,20 +61,47 @@ app.post('/addList', (req,res)=>{
 })
 
 
+
+
+
 app.put('/upvote', (req, res) =>{
 
-    console.log(req.body.toDo,req.body.priority)
-    db.collection('toDoList').updateOne({toDo:req.body.toDo, priority:req.body.priority})
-    .then(result => {
-        console.log('Increase Priority')
-        response.json('Increase Priority')
+    
+    //let priorityS = parseInt(req.body.priorityS) 
+    console.log(req.body.priorityS)
+    db.collection('toDoList').updateOne({toDo:req.body.toDoS, priority: req.body.priorityS}, {
+        $set: {priority: req.body.priorityS + 1}
+    },{
+        sort: {_id: -1},
+        upsert: true
     })
+    .then(result =>{
+        console.log("UpVote")
+        res.json("UpVote")})
     .catch(error => console.log(error))
+})
+
+
+app.put('/downVote', (req,res)=>{
+
+    //let priorityS = parseInt(req.body.priorityS) 
+    console.log(req.body.priorityS)
+    db.collection('toDoList').updateOne({toDo:req.body.toDoS, priority: req.body.priorityS}, {
+        $set: {priority: req.body.priorityS - 1}
+    },{
+        sort: {_id: -1},
+        upsert: true
+    })
+    .then(result =>{
+        console.log("DownVote")
+        res.json("DownVote")})
+    .catch(error => console.log(error))
+
 })
 
 app.delete('/deleteTask', (req,res) =>{
     
-    console.log(req.body)
+    
     db.collection('toDoList').deleteOne(req.body)
     .then(result =>{
         res.json('Deleted')
