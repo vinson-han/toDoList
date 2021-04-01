@@ -1,13 +1,15 @@
 const express = require('express')
+const app = express()
 const cors = require('cors')
 const { MongoClient } = require('mongodb')
 const { response, request } = require('express')
 const { resolveInclude } = require('ejs')
-const app = express()
+
+require('dotenv').config()
 
 const PORT = 3000
 
-// 
+
 app.use(express.static('public'))
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
@@ -15,7 +17,7 @@ app.set('view engine', 'ejs')
 
 const password = "demo"
 
-let db,dbconnector = `mongodb+srv://vinson:${password}@cluster0.ijr7q.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
+let db,dbconnector = process.env.DB_STRING,
     dbName="Playlist"
 
 const data = {
